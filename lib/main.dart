@@ -6,6 +6,7 @@ void main() {
   runApp(HeartBeatApp());
 }
 
+// Main app widget
 class HeartBeatApp extends StatelessWidget {
   const HeartBeatApp({super.key});
 
@@ -13,11 +14,12 @@ class HeartBeatApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HeartbeatScreen(),
+      home: HeartbeatScreen(), // Sets the home screen to HeartbeatScreen
     );
   }
 }
 
+// Heartbeat screen widget
 class HeartbeatScreen extends StatefulWidget {
   const HeartbeatScreen({super.key});
 
@@ -29,12 +31,14 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  final Random _random = Random();
-  final List<Offset> _balloons = [];
+  final Random _random = Random(); // random generator for balloons
+  final List<Offset> _balloons = []; // list to store balloons position
 
   @override
   void initState() {
     super.initState();
+
+    // Heartbeat effect
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 800),
@@ -80,6 +84,7 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
               },
             ),
           ),
+          // display balloons
           ..._balloons.map((position) => AnimatedBalloon(position)),
         ],
       ),
@@ -87,6 +92,7 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
   }
 }
 
+// Floating balloons widget
 class AnimatedBalloon extends StatefulWidget {
   final Offset startPosition;
   const AnimatedBalloon(this.startPosition, {super.key});

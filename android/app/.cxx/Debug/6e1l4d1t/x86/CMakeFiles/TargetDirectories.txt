@@ -1,0 +1,2 @@
+/Users/stax/Desktop/animated_heartbeat_app/android/app/.cxx/Debug/6e1l4d1t/x86/CMakeFiles/edit_cache.dir
+/Users/stax/Desktop/animated_heartbeat_app/android/app/.cxx/Debug/6e1l4d1t/x86/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/stax/Desktop/flutter/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/stax/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/stax/Desktop/animated_heartbeat_app/android/app/.cxx/Debug/6e1l4d1t/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/stax/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/stax/Desktop/animated_heartbeat_app/android/app/.cxx/Debug/6e1l4d1t/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

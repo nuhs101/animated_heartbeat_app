@@ -1,3 +1,5 @@
+// Gabe Rawlings grawlings2@student.gsu.edu
+// Nuh Shekhey nshekhey1@student.gsu.edu
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
@@ -14,7 +16,7 @@ class HeartBeatApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HeartbeatScreen(), // Sets the home screen to HeartbeatScreen
+      home: HeartbeatScreen(),
     );
   }
 }
@@ -31,14 +33,26 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  final Random _random = Random(); // random generator for balloons
-  final List<Offset> _balloons = []; // list to store balloons position
+  final Random _random = Random();
+  final List<Offset> _balloons = [];
+  int _seconds = 25; // Timer set to 25 seconds
+  late Timer _countdownTimer;
+  bool _timerRunning = true;
+  String _customMessage = "";
+  int _greetingIndex = 0;
+  final List<String> _greetings = [
+    "Happy Valentine's Day!",
+    "I ❤️ You!",
+    "My favroite person! 😍",
+    "Bee mine! 🐝",
+    "I love you the most! 💕"
+  ];
 
   @override
   void initState() {
     super.initState();
 
-    // Heartbeat effect
+    // Heartbeat animation
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 800),
@@ -48,11 +62,32 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
+    // Balloon generation
     Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        _balloons.add(
-          Offset(_random.nextDouble() * 400, 600),
-        );
+        _balloons.add(Offset(_random.nextDouble() * 400, 600));
+      });
+    });
+
+    // Countdown timer
+    _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_seconds > 0) {
+        setState(() {
+          _seconds--;
+        });
+      } else {
+        _countdownTimer.cancel();
+        setState(() {
+          _timerRunning = false;
+          _controller.stop(); // Stop the heartbeat animation
+        });
+      }
+    });
+
+    // Rotate greetings every 3 seconds
+    Timer.periodic(Duration(seconds: 3), (timer) {
+      setState(() {
+        _greetingIndex = (_greetingIndex + 1) % _greetings.length;
       });
     });
   }
@@ -60,7 +95,14 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
   @override
   void dispose() {
     _controller.dispose();
+    _countdownTimer.cancel();
     super.dispose();
+  }
+
+  void _addCustomMessage(String message) {
+    setState(() {
+      _customMessage = message;
+    });
   }
 
   @override
@@ -70,24 +112,119 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
       body: Stack(
         children: [
           Center(
-            child: AnimatedBuilder(
-              animation: _scaleAnimation,
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: _scaleAnimation.value,
-                  child: Icon(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Heartbeat animation
+                if (_timerRunning)
+                  AnimatedBuilder(
+                    animation: _scaleAnimation,
+                    builder: (context, child) {
+                      return Transform.scale(
+                        scale: _scaleAnimation.value,
+                        child: Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                          size: 100,
+                        ),
+                      );
+                    },
+                  )
+                else
+                  Icon(
                     Icons.favorite,
-                    color: Colors.red,
+                    color: Colors.red.shade300,
                     size: 100,
                   ),
-                );
-              },
+                SizedBox(height: 20),
+                // Countdown timer display
+                Text(
+                  _timerRunning ? "Time Left: $_seconds sec" : "Time's up!",
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.red.shade700,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+                // Valentine's Day greeting
+                AnimatedOpacity(
+                  opacity: 1.0,
+                  duration: Duration(seconds: 1),
+                  child: Text(
+                    _customMessage.isNotEmpty ? _customMessage : _greetings[_greetingIndex],
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.pink.shade900,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(height: 20),
+                // Add Custom Message Button
+                ElevatedButton(
+                  onPressed: () {
+                    _showGreetingSelectionDialog(context);
+                  },
+                  child: Text("Add a Custom Message"),
+                ),
+              ],
             ),
           ),
-          // display balloons
+          // Floating balloons
           ..._balloons.map((position) => AnimatedBalloon(position)),
         ],
       ),
+    );
+  }
+
+  void _showGreetingSelectionDialog(BuildContext context) {
+    TextEditingController _customMessageController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Select a Greeting"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // List of pre-written greetings
+                ..._greetings.map((greeting) {
+                  return ListTile(
+                    title: Text(greeting),
+                    onTap: () {
+                      _addCustomMessage(greeting);
+                      Navigator.pop(context);
+                    },
+                  );
+                }).toList(),
+                SizedBox(height: 10),
+                // Custom message input
+                TextField(
+                  controller: _customMessageController,
+                  decoration: InputDecoration(
+                    hintText: "Enter your own message...",
+                  ),
+                ),
+                SizedBox(height: 10),
+                // Button to add custom message
+                ElevatedButton(
+                  onPressed: () {
+                    if (_customMessageController.text.isNotEmpty) {
+                      _addCustomMessage(_customMessageController.text);
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text("Add Custom Message"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -150,3 +287,4 @@ class _AnimatedBalloonState extends State<AnimatedBalloon>
     );
   }
 }
+

@@ -152,7 +152,9 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
                   opacity: 1.0,
                   duration: Duration(seconds: 1),
                   child: Text(
-                    _customMessage.isNotEmpty ? _customMessage : _greetings[_greetingIndex],
+                    _customMessage.isNotEmpty
+                        ? _customMessage
+                        : _greetings[_greetingIndex],
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.pink.shade900,
@@ -180,7 +182,7 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
   }
 
   void _showGreetingSelectionDialog(BuildContext context) {
-    TextEditingController _customMessageController = TextEditingController();
+    TextEditingController customMessageController = TextEditingController();
 
     showDialog(
       context: context,
@@ -200,11 +202,11 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
                       Navigator.pop(context);
                     },
                   );
-                }).toList(),
+                }),
                 SizedBox(height: 10),
                 // Custom message input
                 TextField(
-                  controller: _customMessageController,
+                  controller: customMessageController,
                   decoration: InputDecoration(
                     hintText: "Enter your own message...",
                   ),
@@ -213,8 +215,8 @@ class _HeartbeatScreenState extends State<HeartbeatScreen>
                 // Button to add custom message
                 ElevatedButton(
                   onPressed: () {
-                    if (_customMessageController.text.isNotEmpty) {
-                      _addCustomMessage(_customMessageController.text);
+                    if (customMessageController.text.isNotEmpty) {
+                      _addCustomMessage(customMessageController.text);
                       Navigator.pop(context);
                     }
                   },
@@ -287,4 +289,3 @@ class _AnimatedBalloonState extends State<AnimatedBalloon>
     );
   }
 }
-
